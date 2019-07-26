@@ -9,7 +9,9 @@ class Section(models.Model):
     date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True)
     created_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Section_created_by', blank=True,null=True)
     updated_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Section_updated_by', blank=True,null=True)
-    
+    def __str__(self):
+        return self.name 
+
 class Test(models.Model):
     module = models.ForeignKey(Section, on_delete=models.CASCADE)
     name = models.CharField(max_length=50, blank=False, null=True, default = '')
@@ -17,7 +19,9 @@ class Test(models.Model):
     date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True)
     created_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Test_created_by', blank=True,null=True)
     updated_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Test_updated_by', blank=True,null=True)
-    
+    def __str__(self):
+        return self.name 
+
 class Field(models.Model):
     test = models.ForeignKey(Test, on_delete=models.CASCADE)
     name = models.CharField(max_length=50, blank=False, null=True, default = '')
@@ -27,7 +31,10 @@ class Field(models.Model):
     date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True)
     created_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Field_created_by', blank=True,null=True)
     updated_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Field_updated_by', blank=True,null=True)
-     
+    def __str__(self):
+        return self.test.name+'-'+self.name 
+
+    
 class Client(models.Model):
     user = models.OneToOneField(User, on_delete=models.PROTECT, blank=True, null=True)
     name = models.CharField(max_length=50, blank=False, null=True, default = '')
@@ -36,12 +43,11 @@ class Client(models.Model):
     status = models.CharField(max_length=10, blank=True, null=True)
     image = models.ImageField(upload_to='profile/',blank=True, null=True)    
     date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True)
-    date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True)
     created_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Client_created_by', blank=True,null=True)
     updated_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Client_updated_by', blank=True,null=True)
     
     def __str__(self):
-        return self.user.username
+        return self.name
 
 class Sample(models.Model):
     client = models.ForeignKey(Client, on_delete=models.PROTECT)
@@ -50,7 +56,7 @@ class Sample(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Sample_created_by', blank=True,null=True)
     updated_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Sample_updated_by', blank=True,null=True)
     def __str__(self):
-        return self.user.name
+        return self.client.name
 
 
 class SampleTest(models.Model):
@@ -65,6 +71,7 @@ class SampleTest(models.Model):
 
 class ResultFields(models.Model):
     field = models.ForeignKey(Field, on_delete=models.CASCADE)
+    sample_test = models.ForeignKey(SampleTest, on_delete=models.CASCADE)
     name = models.CharField(max_length=50, blank=False, null=True, default = '')
     reason = models.CharField(max_length=50, blank=False, null=True, default = '')
     note = models.CharField(max_length=150, blank=False, null=True, default = '')
