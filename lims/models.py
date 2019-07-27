@@ -10,7 +10,10 @@ class Section(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Section_created_by', blank=True,null=True)
     updated_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Section_updated_by', blank=True,null=True)
     def __str__(self):
-        return self.name 
+        return self.name
+    @property
+    def tests(self):
+        return self.test_set.all() 
 
 class Test(models.Model):
     module = models.ForeignKey(Section, on_delete=models.CASCADE)
@@ -21,6 +24,9 @@ class Test(models.Model):
     updated_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Test_updated_by', blank=True,null=True)
     def __str__(self):
         return self.name 
+    @property
+    def fields(self):
+        return self.field_set.all()
 
 class Field(models.Model):
     test = models.ForeignKey(Test, on_delete=models.CASCADE)
@@ -48,6 +54,10 @@ class Client(models.Model):
     
     def __str__(self):
         return self.name
+    
+    @property
+    def samples(self):
+        return self.sample_set.all()
 
 class Sample(models.Model):
     client = models.ForeignKey(Client, on_delete=models.PROTECT)
@@ -57,6 +67,10 @@ class Sample(models.Model):
     updated_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Sample_updated_by', blank=True,null=True)
     def __str__(self):
         return self.client.name
+    
+    @property
+    def sampletests(self):
+        return self.sampletest_set.all()
 
 
 class SampleTest(models.Model):
@@ -67,6 +81,10 @@ class SampleTest(models.Model):
     updated_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='SampleTest_updated_by', blank=True,null=True)
     def __str__(self):
         return self.user.sample.name
+    
+    @property
+    def resultfield(self):
+        return self.resultfields_set.all()
 
 
 class ResultFields(models.Model):
@@ -90,3 +108,5 @@ class SampleTestStatus(models.Model):
     updated_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='SampleTestStatus_updated_by', blank=True,null=True)
     # def __str__(self):
     #     return self.user.username
+
+

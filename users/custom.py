@@ -10,9 +10,6 @@ from users.views import *
 from rest_framework import routers
 
 def make_url_pattern(view,pre_append='',post_append='',optional_append=''):
-    pre_append='api/'
-    post_append='<int:owner>/<int:role>/'
-    optional_append='<int:id>/'
     urlpatterns=[]
     for key in view.keys():
         urlpatterns.append(path(pre_append+key+'/'+post_append,view[key]))
