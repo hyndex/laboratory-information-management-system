@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'lims',
     'users',
 ]
+INSTALLED_APPS += ['django_extensions']
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

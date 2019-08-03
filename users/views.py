@@ -8,12 +8,13 @@ from rest_framework.filters import OrderingFilter,SearchFilter
 from rest_framework.views import APIView
 from django.contrib.auth import login as django_login, logout as django_logout
 from rest_framework.authtoken.models import Token
-#from users.permissions import *
+from users.permissions import *
 from rest_framework.permissions import *
 from rest_framework.generics import CreateAPIView
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import mixins
+#from users.custom import *
 
    
 class CreateUserView(CreateAPIView):
@@ -119,3 +120,9 @@ class ProfileView(mixins.ListModelMixin,
         return self.update(request, *args, **kwargs)
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
+
+def PermissionView(request):
+    from django.http import JsonResponse
+    import json
+    perm=user_role_permission(username=str(request.user))
+    return JsonResponse(perm,safe=False)

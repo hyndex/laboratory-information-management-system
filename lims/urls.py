@@ -2,7 +2,7 @@ from users.custom import *
 from .views import *
 
 pre_append='api/'
-post_append=''
+post_append='<int:role>/<int:section>/'
 optional_append='<int:id>/'
 
 views['section']=SectionView.as_view()

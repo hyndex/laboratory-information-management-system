@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 import datetime as dt
+from lims.models import *
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -23,6 +24,9 @@ class Module(models.Model):
     
     def __str__(self):
         return self.module
+    @property
+    def rolepermissions(self):
+        return self.rolepermission_set.all() 
 
 class Role(models.Model):
     role = models.CharField(max_length=50)
@@ -32,6 +36,9 @@ class Role(models.Model):
     
     def __str__(self):
         return self.role
+    @property
+    def rolepermissions(self):
+        return self.rolepermission_set.all() 
 
 class RolePermission(models.Model):
     TYPE_CHOICES = (('FullAccess','FullAccess'),('ReadOnly','ReadOnly'),('OnlyOwner','OnlyOwner'),('OnlyCreated','OnlyCreated'),('OnlySuperAdmin','OnlySuperAdmin'))
@@ -42,18 +49,22 @@ class RolePermission(models.Model):
     update = models.BooleanField(default=False)
     delete = models.BooleanField(default=False)
     type = models.CharField(max_length=50, default='ReadOnlyTree',choices=TYPE_CHOICES)
+    scope = models.ForeignKey(Section,on_delete=models.CASCADE, blank=True, null=True)
     date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True)
     created_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='RolePersission_created_by', blank=True,null=True)
     updated_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='RolePersission_updated_by', blank=True,null=True)
-
-
     def __str__(self):
         return str(self.role.role)
 
 class ProfileRole(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(Profile, on_delete=models.CASCADE)
     role = models.ForeignKey(Role, on_delete=models.CASCADE)
     date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True)
     created_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='ProfileRole_created_by', blank=True,null=True)
     updated_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='ProfileRole_updated_by', blank=True,null=True)
+    def __str__(self):
+        return self.user.user.username+'_'+self.role.role
     
+    @property
+    def profiles(self):
+        return self.profile_set.all() 

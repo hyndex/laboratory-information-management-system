@@ -72,7 +72,6 @@ class RoleSerializer(serializers.ModelSerializer):
 
 
 class ProfileRoleSerializer(serializers.ModelSerializer):
-    
     class Meta:
         model = ProfileRole
         fields='__all__'
