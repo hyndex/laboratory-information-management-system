@@ -15,6 +15,38 @@
 	pip install django-allauth
 ```
 
+## Login
+```
+	/users/Login/
+	{
+		"username":"admin",
+		"password": "qwerty",
+	}
+```
+## Logout
+```
+/users/Logout/
+```
+## Create User
+```
+Url:/users/Profile/
+Json:
+		{
+			"user": {
+				"username": "",
+				"password": "",
+				"email": ""
+			},
+			"name": "",
+			"phone": "",
+			"address": "",
+			"status": "",
+			"image": null
+		}
+Response:
+```
+
+
 ## Structure
 In a RESTful API, endpoints (URLs) define the structure of the API and how end users access data from our application using the HTTP methods - GET, POST, PUT, DELETE. Endpoints should be logically organized around _collections_ and _elements_, both of which are resources.
 

@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .models import *
 from .serializers import *
+from users.permissions import *
 from rest_framework import generics
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -28,6 +29,7 @@ class SectionView(mixins.ListModelMixin,
     serializer=SectionSerializer
     queryset = model.objects.all()
     serializer_class = serializer
+    permission_classes =[CustomPermission]
     lookup_field='id'
     filter_fields='__all__'
     ordering_fields='__all__'
@@ -55,6 +57,7 @@ class TestView(mixins.ListModelMixin,
     serializer=TestSerializer
     queryset = model.objects.all()
     serializer_class = serializer
+    permission_classes =[CustomPermission]
     lookup_field='id'
     filter_fields='__all__'
     ordering_fields='__all__'
@@ -81,6 +84,7 @@ class FieldView(mixins.ListModelMixin,
     serializer=FieldSerializer
     queryset = model.objects.all()
     serializer_class = serializer
+    permission_classes =[CustomPermission]
     lookup_field='id'
     filter_fields='__all__'
     ordering_fields='__all__'
@@ -107,6 +111,7 @@ class ClientView(mixins.ListModelMixin,
     serializer=ClientSerializer
     queryset = model.objects.all()
     serializer_class = serializer
+    permission_classes =[CustomPermission]
     lookup_field='id'
     filter_fields='__all__'
     ordering_fields='__all__'
@@ -133,6 +138,7 @@ class SampleView(mixins.ListModelMixin,
     serializer=SampleSerializer
     queryset = model.objects.all()
     serializer_class = serializer
+    permission_classes =[CustomPermission]
     lookup_field='id'
     filter_fields='__all__'
     ordering_fields='__all__'
@@ -159,6 +165,7 @@ class SampleTestView(mixins.ListModelMixin,
     serializer=SampleTestSerializer
     queryset = model.objects.all()
     serializer_class = serializer
+    permission_classes =[CustomPermission]
     lookup_field='id'
     filter_fields='__all__'
     ordering_fields='__all__'
@@ -185,6 +192,7 @@ class ResultFieldsView(mixins.ListModelMixin,
     serializer=ResultFieldsSerializer
     queryset = model.objects.all()
     serializer_class = serializer
+    permission_classes =[CustomPermission]
     lookup_field='id'
     filter_fields='__all__'
     ordering_fields='__all__'

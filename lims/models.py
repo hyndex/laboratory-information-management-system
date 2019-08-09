@@ -27,6 +27,9 @@ class Test(models.Model):
     @property
     def fields(self):
         return self.field_set.all()
+    @property
+    def computedfields(self):
+        return self.computedfield_set.all()
 
 class Field(models.Model):
     test = models.ForeignKey(Test, on_delete=models.CASCADE)
@@ -40,6 +43,17 @@ class Field(models.Model):
     def __str__(self):
         return self.test.name+'-'+self.name 
 
+class ComputedField(models.Model):
+    test = models.ForeignKey(Test, on_delete=models.CASCADE)
+    formula = models.CharField(max_length=550, blank=False, null=True, default = '')
+    measure = models.CharField(max_length=50, blank=False, null=True, default = '')
+    uplimit = models.FloatField(default = 0)
+    downlimit = models.FloatField(default = 0)
+    date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True)
+    created_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='ComputedFields_created_by', blank=True,null=True)
+    updated_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='ComputedFields_updated_by', blank=True,null=True)
+    def __str__(self):
+        return self.test.name+'-'+self.name 
     
 class Client(models.Model):
     user = models.OneToOneField(User, on_delete=models.PROTECT, blank=True, null=True)
@@ -66,7 +80,7 @@ class Sample(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Sample_created_by', blank=True,null=True)
     updated_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Sample_updated_by', blank=True,null=True)
     def __str__(self):
-        return self.client.name
+        return self.name
     
     @property
     def sampletests(self):
@@ -80,7 +94,7 @@ class SampleTest(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='SampleTest_created_by', blank=True,null=True)
     updated_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='SampleTest_updated_by', blank=True,null=True)
     def __str__(self):
-        return self.user.sample.name
+        return self.sample.name
     
     @property
     def resultfield(self):
@@ -90,14 +104,14 @@ class SampleTest(models.Model):
 class ResultFields(models.Model):
     field = models.ForeignKey(Field, on_delete=models.CASCADE)
     sample_test = models.ForeignKey(SampleTest, on_delete=models.CASCADE)
-    name = models.CharField(max_length=50, blank=False, null=True, default = '')
+    value = models.FloatField(default=0)
     reason = models.CharField(max_length=50, blank=False, null=True, default = '')
     note = models.CharField(max_length=150, blank=False, null=True, default = '')
     date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True)
     created_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='ResultFields_created_by', blank=True,null=True)
     updated_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='ResultFields_updated_by', blank=True,null=True)
-    def __str__(self):
-        return self.name
+    # def __str__(self):
+    #     return self.
 
 
 class SampleTestStatus(models.Model):
@@ -109,4 +123,25 @@ class SampleTestStatus(models.Model):
     # def __str__(self):
     #     return self.user.username
 
+class Product(models.Model):
+    name = models.CharField(max_length=150, blank=False, null=True, default = '')
+    formula = models.CharField(max_length=150, blank=False, null=True, default = '')
+    measure = models.CharField(max_length=50, blank=False, null=True, default = '')
+    date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True)
+    created_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Product_created_by', blank=True,null=True)
+    updated_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Product_updated_by', blank=True,null=True)
+    def __str__(self):
+        return self.name+'->'++self.measure
+
+
+class Inventory(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.PROTECT, blank=True,null=True)
+    quantity = models.FloatField(default=0)
+    unit = models.FloatField(default=0)
+    measure = models.CharField(max_length=50, blank=False, null=True, default = '')
+    date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True)
+    created_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Inventory_created_by', blank=True,null=True)
+    updated_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Inventory_updated_by', blank=True,null=True)
+    def __str__(self):
+        return self.product.name+'->'+self.quantity+'->'+self.unit+' '+self.product.measure
 

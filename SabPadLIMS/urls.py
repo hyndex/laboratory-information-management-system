@@ -21,3 +21,4 @@ urlpatterns = [
     path('users/', include('users.urls')),
     path('lab/', include('lims.urls')),
 ]
+

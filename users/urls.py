@@ -1,17 +1,23 @@
-from users.custom import *
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from .views import *
 
-pre_append='api/'
-post_append=''
-optional_append='<int:id>/'
+# Create a router and register our viewsets with it.
+router = DefaultRouter()
+router.register(r'Profile', ProfileViewSet)
+router.register(r'RolePermission', RolePermissionViewSet)
+router.register(r'Role', RoleViewSet)
+router.register(r'ProfileRole', ProfileRoleViewSet)
+router.register(r'RolePermission', RolePermissionViewSet)
+# router.register(r'User', UserViewSet)
 
-views['register']=CreateUserView.as_view()
-views['login']=LoginView.as_view()
-views['logout']=LogoutView.as_view()
-views['permission']=PermissionView
-views['role_permission']=RolePermissionView.as_view()
-views['profile_role']=ProfileRoleView.as_view()
-views['profile']=ProfileView.as_view()
-
-
-urlpatterns = make_url_pattern(views,pre_append,post_append,optional_append)
+# The API URLs are now determined automatically by the router.
+urlpatterns = [
+    path('', include(router.urls)),
+    path('ChangePassword/', ChangePasswordView.as_view()),
+    path('Permission/', PermissionView),
+    path('Install/', InstallView),
+    path('Logout/', LogoutView.as_view()),
+    path('Login/', LoginView.as_view()),
+    path('CreateUser/', CreateUserView.as_view()),
+]

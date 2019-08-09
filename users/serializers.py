@@ -5,6 +5,11 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from rest_framework import serializers
 
+
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField()
@@ -31,16 +36,18 @@ class LoginSerializer(serializers.Serializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
     class Meta:
         model = User
-        fields=('username','password','email')
+        fields=('id','username','password','email')
         write_only_fields=('password',)
 
 class ProfileSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
     user = UserSerializer(required=True)
     class Meta:
         model = Profile
-        fields = ('user','name','phone','address','status','image',)
+        fields = ('id','user','name','phone','address','status','image',)
 
     def create(self, validated_data):
         user_data = validated_data.pop('user')

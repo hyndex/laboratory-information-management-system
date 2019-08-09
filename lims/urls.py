@@ -1,8 +1,22 @@
-from users.custom import *
+# from users.urlgen import *
 from .views import *
+from django.contrib import admin
+from django.urls import path
+from django.urls import include, path
+from users.views import *
+from rest_framework import routers
 
-pre_append='api/'
-post_append='<int:role>/<int:section>/'
+def make_url_pattern(view,pre_append='',post_append='',optional_append=''):
+    urlpatterns=[]
+    for key in view.keys():
+        urlpatterns.append(path(pre_append+key+'/'+post_append,view[key]))
+        if not optional_append=='':
+            urlpatterns.append(path(pre_append+key+'/'+post_append+optional_append,view[key]))
+    return urlpatterns
+views={}
+
+pre_append=''
+post_append=''
 optional_append='<int:id>/'
 
 views['section']=SectionView.as_view()
