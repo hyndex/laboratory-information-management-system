@@ -1,209 +1,84 @@
-from django.shortcuts import render
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework import viewsets
+from rest_framework.generics import CreateAPIView, UpdateAPIView
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication, BasicAuthentication
+from django.contrib.auth import login as django_login, logout as django_logout
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
+from rest_framework.authtoken.models import Token
+from django.http import JsonResponse
+from users.permissions import *
 from .models import *
 from .serializers import *
-from users.permissions import *
-from rest_framework import generics
-from rest_framework.authentication import SessionAuthentication, TokenAuthentication, BasicAuthentication
-from rest_framework.permissions import IsAuthenticated
-from rest_framework import generics
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.filters import OrderingFilter,SearchFilter
-from rest_framework.views import APIView
-from django.contrib.auth import login as django_login, logout as django_logout
-from rest_framework.authtoken.models import Token
-from rest_framework.response import Response
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import *
-from rest_framework import viewsets
-from rest_framework.response import Response
-from rest_framework import mixins
 
-class SectionView(mixins.ListModelMixin,
-                  mixins.CreateModelMixin,
-                  mixins.RetrieveModelMixin,
-                  mixins.UpdateModelMixin,
-                  mixins.DestroyModelMixin,
-                  generics.GenericAPIView):
-    
-    model=Section
-    serializer=SectionSerializer
-    queryset = model.objects.all()
-    serializer_class = serializer
-    permission_classes =[CustomPermission]
-    lookup_field='id'
-    filter_fields='__all__'
-    ordering_fields='__all__'
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
-    def get(self, request, id=None):
-        if id:
-            return self.retrieve(request)
-        else:
-            return self.list(request)
-    def put(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
-    def delete(self, request, *args, **kwargs):
-        return self.destroy(request, *args, **kwargs)
+class SectionViewSet(viewsets.ModelViewSet):
+    queryset = Section.objects.all()
+    serializer_class = SectionSerializer
+    model=serializer_class().Meta().model
+    permission_classes = [IsAuthenticated,CustomPermission]
+    def get_queryset(self):
+        return get_query(self.request,self.model).queryset()
 
 
-class TestView(mixins.ListModelMixin,
-                  mixins.CreateModelMixin,
-                  mixins.RetrieveModelMixin,
-                  mixins.UpdateModelMixin,
-                  mixins.DestroyModelMixin,
-                  generics.GenericAPIView):
-    
-    model=Test
-    serializer=TestSerializer
-    queryset = model.objects.all()
-    serializer_class = serializer
-    permission_classes =[CustomPermission]
-    lookup_field='id'
-    filter_fields='__all__'
-    ordering_fields='__all__'
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
-    def get(self, request, id=None):
-        if id:
-            return self.retrieve(request)
-        else:
-            return self.list(request)
-    def put(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
-    def delete(self, request, *args, **kwargs):
-        return self.destroy(request, *args, **kwargs)
+class TestViewSet(viewsets.ModelViewSet):
+    queryset = Test.objects.none()
+    serializer_class = TestSerializer
+    model=serializer_class().Meta().model
+    permission_classes = [IsAuthenticated,CustomPermission]
+    model=serializer_class().Meta().model
+    def get_queryset(self):
+        print(self.request.user.username, self.request.method, self.model)
+        return get_query(self.request,self.model).queryset()
 
-class FieldView(mixins.ListModelMixin,
-                  mixins.CreateModelMixin,
-                  mixins.RetrieveModelMixin,
-                  mixins.UpdateModelMixin,
-                  mixins.DestroyModelMixin,
-                  generics.GenericAPIView):
-    
-    model=Field
-    serializer=FieldSerializer
-    queryset = model.objects.all()
-    serializer_class = serializer
-    permission_classes =[CustomPermission]
-    lookup_field='id'
-    filter_fields='__all__'
-    ordering_fields='__all__'
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
-    def get(self, request, id=None):
-        if id:
-            return self.retrieve(request)
-        else:
-            return self.list(request)
-    def put(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
-    def delete(self, request, *args, **kwargs):
-        return self.destroy(request, *args, **kwargs)
+class FieldViewSet(viewsets.ModelViewSet):
+    queryset = Field.objects.all()
+    serializer_class = FieldSerializer
+    model=serializer_class().Meta().model
+    permission_classes = [IsAuthenticated,CustomPermission]
+    model=serializer_class().Meta().model
+    def get_queryset(self):
+        print(self.request.user)
+        return get_query(self.request,self.model).queryset()
 
-class ClientView(mixins.ListModelMixin,
-                  mixins.CreateModelMixin,
-                  mixins.RetrieveModelMixin,
-                  mixins.UpdateModelMixin,
-                  mixins.DestroyModelMixin,
-                  generics.GenericAPIView):
-    
-    model=Client
-    serializer=ClientSerializer
-    queryset = model.objects.all()
-    serializer_class = serializer
-    permission_classes =[CustomPermission]
-    lookup_field='id'
-    filter_fields='__all__'
-    ordering_fields='__all__'
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
-    def get(self, request, id=None):
-        if id:
-            return self.retrieve(request)
-        else:
-            return self.list(request)
-    def put(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
-    def delete(self, request, *args, **kwargs):
-        return self.destroy(request, *args, **kwargs)
+class ClientViewSet(viewsets.ModelViewSet):
+    queryset = Client.objects.all()
+    serializer_class = ClientSerializer
+    model=serializer_class().Meta().model
+    permission_classes = [IsAuthenticated,CustomPermission]
+    model=serializer_class().Meta().model
+    def get_queryset(self):
+        print(self.request.user)
+        return get_query(self.request,self.model).queryset()
 
-class SampleView(mixins.ListModelMixin,
-                  mixins.CreateModelMixin,
-                  mixins.RetrieveModelMixin,
-                  mixins.UpdateModelMixin,
-                  mixins.DestroyModelMixin,
-                  generics.GenericAPIView):
-    
-    model=Sample
-    serializer=SampleSerializer
-    queryset = model.objects.all()
-    serializer_class = serializer
-    permission_classes =[CustomPermission]
-    lookup_field='id'
-    filter_fields='__all__'
-    ordering_fields='__all__'
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
-    def get(self, request, id=None):
-        if id:
-            return self.retrieve(request)
-        else:
-            return self.list(request)
-    def put(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
-    def delete(self, request, *args, **kwargs):
-        return self.destroy(request, *args, **kwargs)
 
-class SampleTestView(mixins.ListModelMixin,
-                  mixins.CreateModelMixin,
-                  mixins.RetrieveModelMixin,
-                  mixins.UpdateModelMixin,
-                  mixins.DestroyModelMixin,
-                  generics.GenericAPIView):
-    
-    model=SampleTest
-    serializer=SampleTestSerializer
-    queryset = model.objects.all()
-    serializer_class = serializer
-    permission_classes =[CustomPermission]
-    lookup_field='id'
-    filter_fields='__all__'
-    ordering_fields='__all__'
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
-    def get(self, request, id=None):
-        if id:
-            return self.retrieve(request)
-        else:
-            return self.list(request)
-    def put(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
-    def delete(self, request, *args, **kwargs):
-        return self.destroy(request, *args, **kwargs)
+class SampleViewSet(viewsets.ModelViewSet):
+    queryset = Sample.objects.all()
+    serializer_class = SampleSerializer
+    model=serializer_class().Meta().model
+    permission_classes = [IsAuthenticated,CustomPermission]
+    model=serializer_class().Meta().model
+    def get_queryset(self):
+        print(self.request.user)
+        return get_query(self.request,self.model).queryset()
 
-class ResultFieldsView(mixins.ListModelMixin,
-                  mixins.CreateModelMixin,
-                  mixins.RetrieveModelMixin,
-                  mixins.UpdateModelMixin,
-                  mixins.DestroyModelMixin,
-                  generics.GenericAPIView):
-    
-    model=ResultFields
-    serializer=ResultFieldsSerializer
-    queryset = model.objects.all()
-    serializer_class = serializer
-    permission_classes =[CustomPermission]
-    lookup_field='id'
-    filter_fields='__all__'
-    ordering_fields='__all__'
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
-    def get(self, request, id=None):
-        if id:
-            return self.retrieve(request)
-        else:
-            return self.list(request)
-    def put(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
-    def delete(self, request, *args, **kwargs):
-        return self.destroy(request, *args, **kwargs)
+
+class SampleTestViewSet(viewsets.ModelViewSet):
+    queryset = SampleTest.objects.all()
+    serializer_class = SampleTestSerializer
+    model=serializer_class().Meta().model
+    permission_classes = [IsAuthenticated,CustomPermission]
+    model=serializer_class().Meta().model
+    def get_queryset(self):
+        print(self.request.user)
+        return get_query(self.request,self.model).queryset()
+
+class ResultFieldsViewSet(viewsets.ModelViewSet):
+    queryset = ResultFields.objects.all()
+    serializer_class = ResultFieldsSerializer
+    model=serializer_class().Meta().model
+    permission_classes = [IsAuthenticated,CustomPermission]
+    model=serializer_class().Meta().model
+    def get_queryset(self):
+        print(self.request.user)
+        return get_query(self.request,self.model).queryset()

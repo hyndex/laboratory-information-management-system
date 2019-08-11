@@ -81,26 +81,34 @@ class UserSerializer(serializers.ModelSerializer):
                 p.save()
         return instance
     
+
 class RolePermissionSerializer(serializers.ModelSerializer):
+    # id = serializers.IntegerField(required=False)
     class Meta:
         model = RolePermission
-        fields='__all__'
+        fields=('id','module','role','create','read','update','delete','type','date_updated','created_by','updated_by')
         read_only_fields=('date_updated','created_by','updated_by')
+
 
 class RoleSerializer(serializers.ModelSerializer):
-    role_permission = RolePermissionSerializer(required=True)
+    rolepermission_role = RolePermissionSerializer(many=True)
     class Meta:
         model = Role
+        fields=('id','role','date_updated','created_by','updated_by','rolepermission_role')
+        read_only_fields=('date_updated','created_by','updated_by')
+
+class ModuleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Module
         fields='__all__'
         read_only_fields=('date_updated','created_by','updated_by')
 
-
 class ProfileRoleSerializer(serializers.ModelSerializer):
-    role=RoleSerializer(required=True)
-    profile=ProfileSerializer(required=True)
+    # role=RoleSerializer(required=True)
+    # profile=ProfileSerializer(required=True)
     class Meta:
         model = ProfileRole
-        fields='__all__'
+        fields=('id','user','role','scope','depertment','date_updated','created_by','updated_by')
         read_only_fields=('date_updated','created_by','updated_by')
              
 

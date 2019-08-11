@@ -100,7 +100,6 @@ class LoginView(APIView):
         token, created=Token.objects.get_or_create(user=user)#created = True if token already exist else False
         return Response({"token": token.key },status=200)
     
-# @csrf_exempt
 class LogoutView(APIView):
     authentication_classes = (TokenAuthentication,)
     def post(self, request):
@@ -116,22 +115,7 @@ def PermissionView(request):
         perm='{"user not permitted"}'
     return JsonResponse(perm,safe=False)
 
+from  users.install import *
 def InstallView(request):
-    msg='{"Already installed"}'
-    if Module.objects.count() == 0:
-        for model in fundamental().get_all_models().keys():
-            Module(module=model).save()
-    
-        User.objects.create_user('admin', password='qwerty',is_staff=True,is_superuser=True)
-        Profile(user=User.objects.get()).save()
-    
-        Role(role='Admin').save()
-    
-        role=Role.objects.get()
-        for model in Module.objects.all():
-            RolePermission(module=model,role=role,create=True,read=True,update=True,delete=True).save()
-    
-        ProfileRole(user=Profile.objects.get(),role=Role.objects.get())
-        msg='{"Installation Done"}'
-    
+    msg=install().install()
     return JsonResponse(msg,safe=False)

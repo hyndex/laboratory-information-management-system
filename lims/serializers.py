@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
-from .models import *
+# from .models import *
 from users.models import *
 
 
@@ -8,34 +8,29 @@ class FieldSerializer(serializers.ModelSerializer):
     # id = serializers.IntegerField(required=False)
     class Meta:
         model = Field
-        fields="__all__"
-        read_only_fields=("date_updated","created_by","updated_by")    
-
-class ComputedFieldSerializer(serializers.ModelSerializer):
-    # id = serializers.IntegerField(required=False)
-    class Meta:
-        model = ComputedField
-        fields="__all__"
+        fields=('test_id','name','formula','measure','uplimit','downlimit',"date_updated","created_by","updated_by")
         read_only_fields=("date_updated","created_by","updated_by")    
 
 
 class TestSerializer(serializers.ModelSerializer):
-    fields = FieldSerializer(many=True)
-    autofields = FieldSerializer(many=True)
+    field_test = FieldSerializer(many=True,required=True)
     # id = serializers.IntegerField(required=False)
     class Meta:
         model = Test
-        fields=["id","module","name","description","fields","autofields","date_updated","created_by","updated_by"]
-        read_only_fields=("date_updated","created_by","updated_by")  
+        fields=["id","section_id","name","description","field_test","date_updated","created_by","updated_by"]
+        read_only_fields=('section',"date_updated","created_by","updated_by")  
+        depth = 1
+        
           
 
 class SectionSerializer(serializers.ModelSerializer):
-    tests=TestSerializer(many=True,required=True)
-    # id = serializers.IntegerField(required=False)
+    test_module=TestSerializer(many=True,required=False)
     class Meta:
         model = Section
-        fields=["id","name","description","tests","date_updated","created_by","updated_by"]
-        read_only_fields=("date_updated","created_by","updated_by")    
+        fields=["id","name","description","test_module","date_updated","created_by","updated_by"]
+        read_only_fields=("date_updated","created_by","updated_by")
+        depth = 1
+    
 
 class SampleTestStatusSerializer(serializers.ModelSerializer):
     # fields=ResultFieldsSerializer(many=True)
@@ -47,33 +42,36 @@ class SampleTestStatusSerializer(serializers.ModelSerializer):
 
 
 class ResultFieldsSerializer(serializers.ModelSerializer):
+    # ResultFields_field=FieldSerializer(many=True,required=False)
     id = serializers.IntegerField(required=False)
     class Meta:
         model = ResultFields
-        fields="__all__"
-        read_only_fields=("date_updated","created_by","updated_by")   
+        fields=('field','sample_test_id','value','reason','note',"date_updated","created_by","updated_by")
+        read_only_fields=('field','sample_test',"date_updated","created_by","updated_by")   
+        depth=1
 
 
 class SampleTestSerializer(serializers.ModelSerializer):
-    fields=ResultFieldsSerializer(many=True)
+    ResultFields_field=ResultFieldsSerializer(many=True,required=False)
     # id = serializers.IntegerField(required=False)
     class Meta:
         model = SampleTest
-        fields=["sample","test","fields","date_updated","created_by","updated_by"]
-        read_only_fields=("date_updated","created_by","updated_by")    
+        fields=["sample_id","test_id","fields",'ResultFields_field',"date_updated","created_by","updated_by"]
+        read_only_fields=("date_updated","created_by","updated_by")  
+        depth=1  
  
 class SampleSerializer(serializers.ModelSerializer):
-    test=TestSerializer(many=True)
-    # id = serializers.IntegerField(required=False)
+    SampleTest_sample=SampleTestSerializer(many=True)
     class Meta:
         model = Sample
-        fields=["client","name","test","date_updated","created_by","updated_by"]
+        fields=["client","name","test",'SampleTest_sample',"date_updated","created_by","updated_by"]
         read_only_fields=("date_updated","created_by","updated_by")   
+        depth=1
 
 class ClientSerializer(serializers.ModelSerializer):
     # sample=SampleSerializer(many=True)
-    # id = serializers.IntegerField(required=False)
     class Meta:
         model = Client
         fields='__all__'
-        read_only_fields=("date_updated","created_by","updated_by")    
+        read_only_fields=("date_updated","created_by","updated_by")   
+        depth=1 
