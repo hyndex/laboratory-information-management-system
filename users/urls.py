@@ -9,7 +9,7 @@ router.register(r'RolePermission', RolePermissionViewSet)
 router.register(r'Role', RoleViewSet)
 router.register(r'ProfileRole', ProfileRoleViewSet)
 router.register(r'RolePermission', RolePermissionViewSet)
-# router.register(r'User', UserViewSet)
+router.register(r'User', UserViewSet)
 
 # The API URLs are now determined automatically by the router.
 urlpatterns = [

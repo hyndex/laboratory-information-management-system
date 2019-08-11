@@ -17,14 +17,14 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = []
     def get_queryset(self):
-        print(self)
+        # print(self)
         return User.objects.all()
 
 
 class ProfileViewSet(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
-    permission_classes = []
+    permission_classes = [CustomPermission]
     model=serializer_class().Meta().model
     def get_queryset(self):
         print(self.request.user)

@@ -34,6 +34,7 @@ class get_query(object):
                 scope=fundamental().user_role_permission(username)['permissions'][module_id]['scope']
                 scope_instance=scope#Scope.objects.get(id=scope.id)
                 filter_set=scope_instance.filter_set
+                auto_value=''
                 exec('auto_value='+str(scope_instance.value))
                 if isinstance(auto_value, str):
                     filter_string=filter_set+'='+'"'+auto_value+'"'
@@ -42,7 +43,8 @@ class get_query(object):
                 print(str1)
                 exec(str1)
                 return query_set
-            except:
+            except Exception as e:
+                print(e)
                 query_set=module.objects.none()
                 return query_set
                 print('None')

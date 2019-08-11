@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import *
+from users.models import *
 from rest_framework import exceptions
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
@@ -35,19 +35,19 @@ class LoginSerializer(serializers.Serializer):
         return data
 
 
-class UserSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(required=False)
-    class Meta:
-        model = User
-        fields=('id','username','password','email')
-        write_only_fields=('password',)
-
 class ProfileSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
-    user = UserSerializer(required=True)
     class Meta:
         model = Profile
         fields = ('id','user','name','phone','address','status','image',)
+        read_only_fields=('user',)
+
+class UserSerializer(serializers.ModelSerializer):
+    profile=ProfileSerializer(required=True)
+    class Meta:
+        model = User
+        fields=('id','username','password','email','profile')
+        write_only_fields=('password',)
 
     def create(self, validated_data):
         user_data = validated_data.pop('user')
@@ -58,13 +58,29 @@ class ProfileSerializer(serializers.ModelSerializer):
         user.save()
         profile = Profile.objects.create(user=user,
                             phone=validated_data.pop('phone'),
+                            name=validated_data.pop('name'),
                             address=validated_data.pop('address'),
                             status=validated_data.pop('status'),
                             image=validated_data.pop('image'),
                             )
         return profile
 
-
+    def update(self, instance ,validated_data):
+        profiles = validated_data.pop('profile')
+        instance.email=validated_data.get('email',instance.email)
+        instance.save()
+        # existing_ids=[u.id for u in instance.user]
+        if 'id' in profiles.keys():
+            if Profile.objects.filter(id=profiles['id']).exists():
+                p=Profile.objects.get(id=profiles['id'])
+                p.name=profiles.get('name',p.name)
+                p.phone=profiles.get('phone',p.phone)
+                p.address=profiles.get('address',p.address)
+                p.status=profiles.get('status',p.status)
+                p.image=profiles.get('image',p.image)
+                p.save()
+        return instance
+    
 class RolePermissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = RolePermission
@@ -72,6 +88,7 @@ class RolePermissionSerializer(serializers.ModelSerializer):
         read_only_fields=('date_updated','created_by','updated_by')
 
 class RoleSerializer(serializers.ModelSerializer):
+    role_permission = RolePermissionSerializer(required=True)
     class Meta:
         model = Role
         fields='__all__'
@@ -79,6 +96,8 @@ class RoleSerializer(serializers.ModelSerializer):
 
 
 class ProfileRoleSerializer(serializers.ModelSerializer):
+    role=RoleSerializer(required=True)
+    profile=ProfileSerializer(required=True)
     class Meta:
         model = ProfileRole
         fields='__all__'

@@ -4,7 +4,7 @@ from rest_framework.permissions import BasePermission
 from users.filter import *
 
 class CustomPermission():
-    def has_object_permission(self,request,view):
+    def has_permission(self,request,view):
         if fundamental().skip_check(view,request) in [True,False]:
             return fundamental().skip_check(view,request) in [True,False]
         try:
@@ -22,10 +22,10 @@ class CustomPermission():
     def has_object_permission(self, request, view, obj):
         try:
             pk=view.kwargs['pk']
-            return queryset(request.user.username,view.model).filter(id=pk).count()>0
+            return get_query(request,view.model).queryset().filter(id=pk).count()>0
         except Exception as e:
             print(e)
-            return False
+            return True
 
 
 class AdminOnly(BasePermission):
