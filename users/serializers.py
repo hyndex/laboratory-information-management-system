@@ -115,7 +115,7 @@ class ProfileRoleSerializer(serializers.ModelSerializer):
     # profile=ProfileSerializer(required=True)
     class Meta:
         model = ProfileRole
-        fields=('id','user','role','scope','depertment','date_updated','created_by','updated_by')
+        fields=('id','user','role','depertment','date_updated','created_by','updated_by')
         read_only_fields=('date_updated','created_by','updated_by')
              
 
