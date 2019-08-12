@@ -8,6 +8,7 @@ class install():
         models=[]
         for app in apps:
             models+=[model.__name__ for model in django.apps.apps.all_models[app].values()]
+            models+=['User']
         if Module.objects.count() == 0:
             for model in models:
                 Module(module=model).save()

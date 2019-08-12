@@ -6,11 +6,12 @@ from .views import *
 router = DefaultRouter()
 router.register(r'Section', SectionViewSet)
 router.register(r'Test', TestViewSet)
-router.register(r'Field', FieldViewSet)
+# router.register(r'Field', FieldViewSet)
 router.register(r'Client', ClientViewSet)
 router.register(r'Sample', SampleViewSet)
 router.register(r'SampleTest', SampleTestViewSet)
-router.register(r'ResultFields', ResultFieldsViewSet)
+# router.register(r'ResultFields', ResultFieldsViewSet)
+router.register(r'SampleTestStatus', SampleTestStatusViewSet)
 
 # The API URLs are now determined automatically by the router.
 urlpatterns = [

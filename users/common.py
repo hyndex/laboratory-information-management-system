@@ -13,16 +13,16 @@ class fundamental():
         return classobj.__name__
     def get_model_id(self,classobj):
         class_name=self.get_class_name(classobj)
-        return Module.objects.get(module=class_name).id
+        return Module.objects.filter(module=class_name)[0].id
     def get_role_id(self,username):
-        return ProfileRole.objects.get(user__user__username=username).role_id
+        return ProfileRole.objects.filter(user__user__username=username)[0].role_id
     def get_role_name(self,username):
-        return ProfileRole.objects.get(user__user__username=username).role.role
+        return ProfileRole.objects.filter(user__user__username=username)[0].role.role
     def get_model_fields(self,model):
         return model._meta.fields
     def user_role_permission(self,username):
         try:
-            profile_role = ProfileRole.objects.get(user__user__username=username)
+            profile_role = ProfileRole.objects.filter(user__user__username=username)[0]
             roles = {}
             role_perm=RolePermission.objects.filter(role=profile_role.role)
             model_perm = {}

@@ -24,15 +24,18 @@ class Test(models.Model):
     updated_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Test_updated_by', blank=True,null=True)
     def __str__(self):
         return self.section.name+'->'+self.name 
-    @property
-    def fields(self):
-        return self.field_set.all()
+    # @property
+    # def fields(self):
+    #     return self.field_set.all()
+    # @property
+    # def section_id(self):
+    #     return self.section.id
 
 class Field(models.Model):
     test = models.ForeignKey(Test, on_delete=models.CASCADE, related_name='field_test')
     name = models.CharField(max_length=50, blank=False, null=True, default = '')
-    formula = models.CharField(max_length=500, blank=False, null=True)
-    measure = models.CharField(max_length=50, blank=False, null=True, default = '')
+    formula = models.CharField(max_length=500, blank=False, null=True,default='')
+    measure = models.CharField(max_length=50, blank=False, null=True, default='')
     uplimit = models.FloatField(default = 0)
     downlimit = models.FloatField(default = 0)
     date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True)
@@ -104,8 +107,9 @@ class ResultFields(models.Model):
 
 
 class SampleTestStatus(models.Model):
-    test_status = models.CharField(max_length=50, blank=False, null=True, default = '')
-    field_type = models.ForeignKey(ResultFields, on_delete=models.PROTECT)
+    TYPE_CHOICES = (('Created','Created'),('Progress','Progress'),('Finished','Finished'))
+    test_status = models.CharField(max_length=15, default='Created',choices=TYPE_CHOICES)
+    sampletest = models.OneToOneField(SampleTest, on_delete=models.PROTECT,related_name='sampleteststatussampletest')
     date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True)
     created_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='SampleTestStatus_created_by', blank=True,null=True)
     updated_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='SampleTestStatus_updated_by', blank=True,null=True)

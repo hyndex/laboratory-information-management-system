@@ -31,8 +31,12 @@ class CustomPermission():
 class AdminOnly(BasePermission):
     message='You are not authorized to access this page'
     def has_permission(self, request, view):
-        if ProfileRole.objects.filter(user__user__username=request.user,role__role='Admin').count() >0:
-            return True
+        return request.user.is_superuser
+
+class OnlyRead(BasePermission):
+    message='You are not authorized to access this page'
+    def has_permission(self, request, view):
+        return request.method=='GET'
 
 class IsOwnerProfile(BasePermission):
     message='You are not authorized to update this data'

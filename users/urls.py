@@ -4,12 +4,13 @@ from .views import *
 
 # Create a router and register our viewsets with it.
 router = DefaultRouter()
-router.register(r'Profile', ProfileViewSet)
+# router.register(r'Profile', ProfileViewSet)
 router.register(r'RolePermission', RolePermissionViewSet)
 router.register(r'Role', RoleViewSet)
 router.register(r'ProfileRole', ProfileRoleViewSet)
 router.register(r'RolePermission', RolePermissionViewSet)
 router.register(r'User', UserViewSet)
+router.register(r'Module', ModuleViewSet)
 
 # The API URLs are now determined automatically by the router.
 urlpatterns = [
@@ -19,5 +20,5 @@ urlpatterns = [
     path('Install/', InstallView),
     path('Logout/', LogoutView.as_view()),
     path('Login/', LoginView.as_view()),
-    path('CreateUser/', CreateUserView.as_view()),
+    # path('CreateUser/', CreateUserView.as_view()),
 ]

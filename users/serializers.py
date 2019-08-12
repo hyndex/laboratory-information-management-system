@@ -34,13 +34,20 @@ class LoginSerializer(serializers.Serializer):
             raise exceptions.ValidationError(msg)
         return data
 
-
+#dont need
 class ProfileSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     class Meta:
         model = Profile
         fields = ('id','user','name','phone','address','status','image',)
         read_only_fields=('user',)
+
+class ModuleSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+    class Meta:
+        model = Module
+        fields = '__all__'
+        # read_only_fields=('user',)
 
 class UserSerializer(serializers.ModelSerializer):
     profile=ProfileSerializer(required=True)
@@ -91,7 +98,7 @@ class RolePermissionSerializer(serializers.ModelSerializer):
 
 
 class RoleSerializer(serializers.ModelSerializer):
-    rolepermission_role = RolePermissionSerializer(many=True)
+    rolepermission_role = RolePermissionSerializer(many=True,read_only=True)
     class Meta:
         model = Role
         fields=('id','role','date_updated','created_by','updated_by','rolepermission_role')

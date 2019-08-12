@@ -29,14 +29,14 @@
 ```
 ## Create User
 ```
-Url:/users/Profile/
+Url:/users/User/
 Json:
 		{
-			"user": {
-				"username": "",
-				"password": "",
-				"email": ""
-			},
+		"username": "",
+		"password": "",
+		"email": "",
+		"profile": {
+			"id": null,
 			"name": "",
 			"phone": "",
 			"address": "",
@@ -45,36 +45,80 @@ Json:
 		}
 Response:
 ```
-
-
-## Structure
-In a RESTful API, endpoints (URLs) define the structure of the API and how end users access data from our application using the HTTP methods - GET, POST, PUT, DELETE. Endpoints should be logically organized around _collections_ and _elements_, both of which are resources.
-
-In our case, we have one single resource, `Sample`, so we will use the following URLS - `/Sample/` and `/Sample/<id>` for collections and elements, respectively:
-
-Endpoint |HTTP Method | CRUD Method | Result
--- | -- |-- |--
-`Sample` | GET | READ | Get all Sample
-`Sample/:id` | GET | READ | Get a single Sample
-`Sample`| POST | CREATE | Create a new Sample
-`Sample/:id` | PUT | UPDATE | Update a Sample
-`Sample/:id` | DELETE | DELETE | Delete a Sample
-
-
-
-First, we have to start up Django's development server.
+## Role User
 ```
-	python manage.py runserver
+Url:/users/Role/
+Json:
+		{
+    	"role": ""
+		}
+Response:
 ```
-Only authenticated users can use the API services, for that reason if we try this:
+## Assigning permission to Role
 ```
-	http  http://127.0.0.1:8000/api/v1/Sample/3
+Url:/users/RolePermission/
+Json:
+		{
+			"module": null,
+			"role": null,
+			"create": false,
+			"read": false,
+			"update": false,
+			"delete": false,
+			"type": null
+		}
+Response:
 ```
-we get:
+## Creating a Depertment
 ```
- {  "detail":  "You must be authenticated"  }
+Url:/lab/Section/
+Json:
+		{
+			"name": "",
+			"description": ""
+		}
+Response:
 ```
-Instead, if we try to access with credentials:
+## Creating a Test under a Depertment
 ```
-	http http://127.0.0.1:8000/api/v1/Sample/3 "Authorization: Token 7530ec9186a31a5b3dd8d03d84e34f80941391e3"
+Url:/lab/Test/
+Json:
+		{
+			"section_id": null,
+			"name": "",
+			"description": "",
+			"field_test": [
+									{
+									"name":"",
+									"formula":"",
+									"measure':"",
+									"uplimit":"",
+									"downlimit""":
+									}
+							]
+		}
+Response:
+```
+## Creating Client
+```
+Url:/lab/Client/
+Json:
+		{
+			"name": "",
+			"phone": "",
+			"address": "",
+			"status": "",
+			"image": null
+		}
+Response:
+```
+## Registering a Sample under a client
+```
+Url:/lab/Sample/
+Json:
+		{
+			"client_id": null,
+			"name": ""
+		}
+Response:
 ```

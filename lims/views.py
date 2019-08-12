@@ -22,7 +22,7 @@ class SectionViewSet(viewsets.ModelViewSet):
 
 
 class TestViewSet(viewsets.ModelViewSet):
-    queryset = Test.objects.none()
+    queryset = Test.objects.all()
     serializer_class = TestSerializer
     model=serializer_class().Meta().model
     permission_classes = [IsAuthenticated,CustomPermission]
@@ -30,6 +30,8 @@ class TestViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         print(self.request.user.username, self.request.method, self.model)
         return get_query(self.request,self.model).queryset()
+    # def perform_create(self, serializer):
+    #     serializer.save(created_by=self.request.user)
 
 class FieldViewSet(viewsets.ModelViewSet):
     queryset = Field.objects.all()
@@ -66,6 +68,16 @@ class SampleViewSet(viewsets.ModelViewSet):
 class SampleTestViewSet(viewsets.ModelViewSet):
     queryset = SampleTest.objects.all()
     serializer_class = SampleTestSerializer
+    model=serializer_class().Meta().model
+    permission_classes = [IsAuthenticated,CustomPermission]
+    model=serializer_class().Meta().model
+    def get_queryset(self):
+        print(self.request.user)
+        return get_query(self.request,self.model).queryset()
+
+class SampleTestStatusViewSet(viewsets.ModelViewSet):
+    queryset = SampleTestStatus.objects.all()
+    serializer_class = SampleTestStatusSerializer
     model=serializer_class().Meta().model
     permission_classes = [IsAuthenticated,CustomPermission]
     model=serializer_class().Meta().model

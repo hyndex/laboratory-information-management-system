@@ -12,28 +12,31 @@ from users.permissions import *
 # from .models import *
 from .serializers import *
 
+
+
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = []
-    def get_queryset(self):
-        # print(self)
-        return User.objects.all()
-
-
-class ProfileViewSet(viewsets.ModelViewSet):
-    queryset = Profile.objects.all()
-    serializer_class = ProfileSerializer
-    permission_classes = [CustomPermission]
     model=serializer_class().Meta().model
+    permission_classes = [CustomPermission]
     def get_queryset(self):
         print(self.request.user)
         return get_query(self.request,self.model).queryset()
 
+# class ProfileViewSet(viewsets.ModelViewSet):
+#     queryset = Profile.objects.all()
+#     serializer_class = ProfileSerializer
+#     permission_classes = [CustomPermission]
+#     model=serializer_class().Meta().model
+#     def get_queryset(self):
+#         print(self.request.user)
+#         return get_query(self.request,self.model).queryset()
+
+
 class RolePermissionViewSet(viewsets.ModelViewSet):
     queryset = RolePermission.objects.all()
     serializer_class = RolePermissionSerializer
-    permission_classes = []
+    permission_classes = [CustomPermission]
     model=serializer_class().Meta().model
     def get_queryset(self):
         print(self.request.user)
@@ -42,7 +45,7 @@ class RolePermissionViewSet(viewsets.ModelViewSet):
 class RoleViewSet(viewsets.ModelViewSet):
     queryset = Role.objects.all()
     serializer_class = RoleSerializer
-    permission_classes = []
+    permission_classes = [CustomPermission]
     model=serializer_class().Meta().model
     def get_queryset(self):
         print(self.request.user)
@@ -52,7 +55,17 @@ class RoleViewSet(viewsets.ModelViewSet):
 class ProfileRoleViewSet(viewsets.ModelViewSet):
     queryset = ProfileRole.objects.all()
     serializer_class = ProfileRoleSerializer
-    permission_classes = []
+    permission_classes = [CustomPermission]
+    model=serializer_class().Meta().model
+    def get_queryset(self):
+        print(self.request.user)
+        return get_query(self.request,self.model).queryset()
+
+
+class ModuleViewSet(viewsets.ModelViewSet):
+    queryset = Module.objects.all()
+    serializer_class = ModuleSerializer
+    permission_classes = [CustomPermission]
     model=serializer_class().Meta().model
     def get_queryset(self):
         print(self.request.user)
@@ -86,10 +99,10 @@ class ChangePasswordView(UpdateAPIView):
 
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class CreateUserView(CreateAPIView):
-    model = User()
-    permission_classes = [CustomPermission]
-    serializer_class = UserSerializer
+# class CreateUserView(CreateAPIView):
+#     model = User()
+#     permission_classes = [CustomPermission]
+#     serializer_class = UserSerializer
     
 class LoginView(APIView):
     def post(self, request):
