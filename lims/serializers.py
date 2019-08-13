@@ -9,8 +9,8 @@ class FieldSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     class Meta:
         model = Field
-        fields=('id','test_id','name','formula','measure','uplimit','downlimit',"date_updated","created_by","updated_by")
-        read_only_fields=("date_updated","created_by","updated_by")    
+        fields=('id','test_id','name','formula','measure','uplimit','downlimit',"date_updated","created","updated")
+        read_only_fields=("date_updated","created","updated")    
 
 
 class TestSerializer(serializers.ModelSerializer):
@@ -19,15 +19,15 @@ class TestSerializer(serializers.ModelSerializer):
     # id = serializers.IntegerField(required=False)
     class Meta:
         model = Test
-        fields=["id","section",'section_id',"name","description","field_test","date_updated","created_by","updated_by"]
-        read_only_fields=("date_updated","created_by","updated_by")  
+        fields=["id","section",'section_id',"name","description","field_test","date_updated","created","updated"]
+        read_only_fields=("date_updated","created","updated")  
         depth = 1
         
     def create(self, validated_data):
         fields = validated_data.pop('field_test')
         section=get_query(self.context['request'],Section).queryset().filter(id=validated_data.get('section_id'))[0]
         print(section)
-        validated_data['created_by']=self.context['request'].user
+        validated_data['created']=self.context['request'].user
         test=Test.objects.create(**validated_data,section=section)
         for field in fields:
             Field.objects.create(**field,test=test)
@@ -50,6 +50,7 @@ class TestSerializer(serializers.ModelSerializer):
                     f.measure=field.get('measure',f.measure)
                     f.uplimit=field.get('uplimit',f.uplimit)
                     f.downlimit=field.get('downlimit',f.downlimit)
+                    f.updated=self.context['request'].user
                     f.save()
                     keep_fields.append(f.id)
                 else:
@@ -69,85 +70,61 @@ class SectionSerializer(serializers.ModelSerializer):
     test_section=TestSerializer(many=True,read_only=True)
     class Meta:
         model = Section
-        fields=["id","name","description","test_section","date_updated","created_by","updated_by"]
-        read_only_fields=("test_section","date_updated","created_by","updated_by")
+        fields=["id","name","description","test_section","date_updated","created","updated"]
+        read_only_fields=("test_section","date_updated","created","updated")
         depth = 1
     
-
-class SampleTestStatusSerializer(serializers.ModelSerializer):
-    # fields=ResultFieldsSerializer(many=True)
-    # id = serializers.IntegerField(required=False)
-    class Meta:
-        model = SampleTestStatus
-        fields=['id',"test_status","sampletest","date_updated","created_by","updated_by"]
-        read_only_fields=("date_updated","created_by","updated_by")
-        write_only_fields=("sampletest",)   
-    def update(self, instance, validated_data):
-        new_status=validated_data.get('test_status')
-        if new_status=='Progress' and instance.test_status in ['Progress','Created']:
-            instance.test_status=validated_data.get('test_status',instance.test_status)
-            instance.save()
-        if new_status=='Finished' and instance.test_status in ['Progress','Finished']:
-            instance.test_status=validated_data.get('test_status',instance.test_status)
-            instance.save()
-        return instance        
-
-
 ##testing required for forignkey enablation
 class ResultFieldsSerializer(serializers.ModelSerializer):
     # ResultFields_field=FieldSerializer(many=True,required=False)
     id = serializers.IntegerField(required=False,read_only=True)
     class Meta:
         model = ResultFields
-        fields=('id','field','sample_test_id','value','reason','note',"date_updated","created_by","updated_by")
-        read_only_fields=("date_updated","created_by","updated_by")   
-        # read_only_fields=('field','sample_test',"date_updated","created_by","updated_by")   
+        fields=('id','value','reason','note',"date_updated","created","updated")
+        read_only_fields=("date_updated","created","updated")   
+        # read_only_fields=('field','sample_test',"date_updated","created","updated")   
         depth=1
         
         
 
 class SampleTestSerializer(serializers.ModelSerializer):
-    ResultFields_field=ResultFieldsSerializer(many=True,required=False)
     sample_id = serializers.IntegerField(write_only=True)
     test_id = serializers.IntegerField(write_only=True)
+    ResultFields_sample_test=ResultFieldsSerializer(many=True)
     class Meta:
         model = SampleTest
-        fields=["sample",'sample_id','test_id',"test",'ResultFields_field',"date_updated","created_by","updated_by"]
-        read_only_fields=('sample','test',"date_updated","created_by","updated_by")  
-        depth=1  
+        # fields=["sample",'sample_id','test_id',"test",'ResultFields_sample_test',"date_updated","created","updated"]
+        fields=['sample_id','test_id',"test",'test_status','ResultFields_sample_test',"date_updated","created","updated"]
+        read_only_fields=('sample','test',"date_updated","created","updated")  
+        depth=3  
 
     def create(self, validated_data):
-        result_fields = validated_data.pop('ResultFields_field')##waste
+        result_fields = validated_data.pop('ResultFields_sample_test')##waste
 
         sample=get_query(self.context['request'],Sample).queryset().filter(id=validated_data.get('sample_id'))[0]
         test=get_query(self.context['request'],Test).queryset().filter(id=validated_data.get('test_id'))[0]
 
-        sample_test=SampleTest.objects.create(**validated_data,sample=sample,test=test)
-        sampleteststatus=SampleTestStatus.objects.create(test_status='Created',sampletest=sample_test)
+        sample_test=SampleTest.objects.create(**validated_data,sample=sample,test=test,test_status='Created')
 
         fields=Field.objects.filter(test__id=test.id)
         if fields.exists():
             for field in fields:
-                ResultFields.objects.create(field=field,sample_test=sample_test)
-        return sampletest
+                ResultFields.objects.create(field=field,sample_test=sample_test,created=self.context['request'].user)
+        return sample_test
 
     def update(self, instance, validated_data):
-        sampletest=instance
 
-        sampleteststatus=SampleTestStatus.objects.filter(sampletest__id=sampletest.id)
-        if not sampleteststatus.exist():
-            sampleteststatus=SampleTestStatus.objects.create(test_status='Progress',sampletest=sampletest)
-            sampleteststatus=SampleTestStatus.objects.filter(sampletest=sampletest)
-        elif sampleteststatus[0].test_status == 'Created':
-            sampleteststatus[0].test_status='Progress'
-            sampleteststatus[0].save()
-        elif sampleteststatus[0].test_status == 'Finished':
+        if instance.test_status == 'Created':
+            instance.test_status='Progress'
+        elif validated_data.get('test_status')=='Finished':
+            instance.test_status='Finished'
+        elif instance.test_status == 'Finished':
             return instance
+        instance.save()
 
-        result_fields=validated_data.pop('ResultFields_field')
+        result_fields=validated_data.pop('ResultFields_sample_test')
         keep_fields=[]
-        existing_ids=[f.id for f in fields]
-        ResultField_set=ResultFields.objects.filter(sample_test__id=instance.id)
+        ResultField_set=ResultFields.objects.filter(sample_test__id=instance.id)    
         existing_ids=[rf.id for rf in ResultField_set]
         for result_field in result_fields:
             if 'id' in result_field.keys():
@@ -156,22 +133,23 @@ class SampleTestSerializer(serializers.ModelSerializer):
                     rf.value=result_field.get('value',rf.value)
                     rf.reason=result_field.get('reason',rf.reason)
                     rf.note=result_field.get('note',rf.note)
+                    rf.updated=self.context['request'].user
                     rf.save()
-                    keep_fields.append(f.id)
+                    keep_fields.append(rf.id)
                 else:
                     continue
-            else:
-                rf=ResultFields.objects.create(**field,sample_test=instance)  
-                keep_fields.append(rf.id)
-
+            # else:
+            #     rf=ResultFields.objects.create(**result_fields,sample_test=instance)  
+            #     keep_fields.append(rf.id)
+        return instance
 
 class SampleSerializer(serializers.ModelSerializer):
     SampleTest_sample=SampleTestSerializer(many=True,read_only=True)
     client_id = serializers.IntegerField(write_only=True)
     class Meta:
         model = Sample
-        fields=["client",'client_id',"name",'SampleTest_sample',"date_updated","created_by","updated_by"]
-        read_only_fields=('client','SampleTest_sample',"date_updated","created_by","updated_by")   
+        fields=["id","client",'client_id',"name",'SampleTest_sample',"date_updated","created","updated"]
+        read_only_fields=('client',"date_updated","created","updated")   
         depth=1
 
     def create(self, validated_data):
@@ -180,13 +158,15 @@ class SampleSerializer(serializers.ModelSerializer):
         # sampleTest_sample = validated_data.pop('SampleTest_sample')
         sample=Sample.objects.create(**validated_data,client=client)
         return sample
-
+    def update(self, instance, validated_data):
+        return instance
+        
 class ClientSerializer(serializers.ModelSerializer):
     # sample=SampleSerializer(many=True)
     class Meta:
         model = Client
         fields='__all__'
-        read_only_fields=("date_updated","created_by","updated_by")   
+        read_only_fields=("date_updated","created","updated")   
         depth=1 
 
 

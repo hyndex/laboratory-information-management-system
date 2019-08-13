@@ -127,20 +127,26 @@ Response:
 ```
 Url:/lab/Test/
 Json:
+{
+	"section_id": 1,
+	"name": "carbs",
+	"description": "carbohyddrate",
+	"field_test": [{
+			"name": "trans fat",
+			"formula": "0",
+			"measure": "mg",
+			"uplimit": 100.0,
+			"downlimit": 0.0
+		},
 		{
-		"section_id": null,
-		"name": "",
-		"description": "",
-		"field_test": [
-						{
-						"name":"",
-						"formula":"",
-						"measure':"",
-						"uplimit":"",
-						"downlimit""":
-						}
-					]
+			"name": "good fat",
+			"formula": "0",
+			"measure": "mg",
+			"uplimit": 100.0,
+			"downlimit": 0.0
 		}
+	]
+}
 Response:
 ```
 ## Creating Client

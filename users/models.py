@@ -19,8 +19,8 @@ class Profile(models.Model):
 class Module(models.Model):
     module = models.CharField(max_length=50)
     date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True)
-    created_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Module_created_by', blank=True,null=True)
-    updated_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Module_updated_by', blank=True,null=True)
+    created = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Module_created', blank=True,null=True)
+    updated = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Module_updated', blank=True,null=True)
     
     def __str__(self):
         return self.module
@@ -31,8 +31,8 @@ class Module(models.Model):
 class Role(models.Model):
     role = models.CharField(max_length=50)
     date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True)
-    created_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Role_created_by', blank=True,null=True)
-    updated_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Role_updated_by', blank=True,null=True)
+    created = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Role_created', blank=True,null=True)
+    updated = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Role_updated', blank=True,null=True)
     
     def __str__(self):
         return self.role
@@ -46,8 +46,8 @@ class Scope(models.Model):
     module = models.ForeignKey(Module, on_delete=models.CASCADE,related_name='scope_Module')
     query_set=models.TextField(blank=True, null=True)
     date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True)
-    created_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Scope_created_by', blank=True,null=True)
-    updated_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Scope_updated_by', blank=True,null=True)
+    created = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Scope_created', blank=True,null=True)
+    updated = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Scope_updated', blank=True,null=True)
     def __str__(self):
         return self.module.module+'_'+self.scope_module.module
 
@@ -62,8 +62,8 @@ class RolePermission(models.Model):
     delete = models.BooleanField(default=False)
     type = models.CharField(max_length=50, default='FullAccess',choices=TYPE_CHOICES)
     date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True)
-    created_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='RolePersission_created_by', blank=True,null=True)
-    updated_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='RolePersission_updated_by', blank=True,null=True)
+    created = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='RolePersission_created', blank=True,null=True)
+    updated = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='RolePersission_updated', blank=True,null=True)
     def __str__(self):
         return self.role.role+'->'+self.module.module
 
@@ -77,8 +77,8 @@ class ProfileRole(models.Model):
     role = models.ForeignKey(Role, on_delete=models.CASCADE, related_name='profilerole_role')
     depertment = models.ForeignKey(Section,on_delete=models.CASCADE, blank=True, null=True, related_name='profilerole_depertment')
     date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True)
-    created_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='ProfileRole_created_by', blank=True,null=True)
-    updated_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='ProfileRole_updated_by', blank=True,null=True)
+    created = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='ProfileRole_created', blank=True,null=True)
+    updated = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='ProfileRole_updated', blank=True,null=True)
     def __str__(self):
         return self.user.user.username+'_'+self.role.role
     

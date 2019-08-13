@@ -75,16 +75,6 @@ class SampleTestViewSet(viewsets.ModelViewSet):
         print(self.request.user)
         return get_query(self.request,self.model).queryset()
 
-class SampleTestStatusViewSet(viewsets.ModelViewSet):
-    queryset = SampleTestStatus.objects.all()
-    serializer_class = SampleTestStatusSerializer
-    model=serializer_class().Meta().model
-    permission_classes = [IsAuthenticated,CustomPermission]
-    model=serializer_class().Meta().model
-    def get_queryset(self):
-        print(self.request.user)
-        return get_query(self.request,self.model).queryset()
-
 class ResultFieldsViewSet(viewsets.ModelViewSet):
     queryset = ResultFields.objects.all()
     serializer_class = ResultFieldsSerializer

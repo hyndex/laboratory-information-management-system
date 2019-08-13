@@ -11,7 +11,6 @@ router.register(r'Client', ClientViewSet)
 router.register(r'Sample', SampleViewSet)
 router.register(r'SampleTest', SampleTestViewSet)
 # router.register(r'ResultFields', ResultFieldsViewSet)
-router.register(r'SampleTestStatus', SampleTestStatusViewSet)
 
 # The API URLs are now determined automatically by the router.
 urlpatterns = [

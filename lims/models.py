@@ -7,8 +7,8 @@ class Section(models.Model):
     name = models.CharField(max_length=50, blank=False, null=True, default = '')
     description = models.CharField(max_length=50, blank=False, null=True, default = '')
     date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True)
-    created_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Section_created_by', blank=True,null=True)
-    updated_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Section_updated_by', blank=True,null=True)
+    created = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Section_created_by', blank=True,null=True)
+    updated = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Section_updated_by', blank=True,null=True)
     def __str__(self):
         return self.name
     @property
@@ -20,8 +20,8 @@ class Test(models.Model):
     name = models.CharField(max_length=50, blank=False, null=True, default = '')
     description = models.CharField(max_length=50, blank=False, null=True, default = '')
     date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True)
-    created_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Test_created_by', blank=True,null=True)
-    updated_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Test_updated_by', blank=True,null=True)
+    created = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Test_created_by', blank=True,null=True)
+    updated = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Test_updated_by', blank=True,null=True)
     def __str__(self):
         return self.section.name+'->'+self.name 
     # @property
@@ -39,8 +39,8 @@ class Field(models.Model):
     uplimit = models.FloatField(default = 0)
     downlimit = models.FloatField(default = 0)
     date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True)
-    created_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Field_created_by', blank=True,null=True)
-    updated_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Field_updated_by', blank=True,null=True)
+    created = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Field_created_by', blank=True,null=True)
+    updated = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Field_updated_by', blank=True,null=True)
     def __str__(self):
         return self.test.name+'-'+self.name 
     @property
@@ -55,8 +55,8 @@ class Client(models.Model):
     status = models.CharField(max_length=10, blank=True, null=True)
     image = models.ImageField(upload_to='profile/',blank=True, null=True)    
     date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True)
-    created_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Client_created_by', blank=True,null=True)
-    updated_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Client_updated_by', blank=True,null=True)
+    created = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Client_created_by', blank=True,null=True)
+    updated= models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Client_updated_by', blank=True,null=True)
     
     def __str__(self):
         return self.name
@@ -69,8 +69,8 @@ class Sample(models.Model):
     client = models.ForeignKey(Client, on_delete=models.PROTECT)
     name = models.CharField(max_length=50, blank=False, null=True, default = '')
     date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True)
-    created_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Sample_created_by', blank=True,null=True)
-    updated_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Sample_updated_by', blank=True,null=True)
+    created = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Sample_created_by', blank=True,null=True)
+    updated = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='Sample_updated_by', blank=True,null=True)
     def __str__(self):
         return self.name
     
@@ -80,11 +80,13 @@ class Sample(models.Model):
 
 
 class SampleTest(models.Model):
+    TYPE_CHOICES = (('Created','Created'),('Progress','Progress'),('Finished','Finished'))
     sample = models.ForeignKey(Sample, on_delete=models.PROTECT,  related_name='SampleTest_sample')
     test = models.ForeignKey(Test, on_delete=models.PROTECT,  related_name='SampleTest_test')
+    test_status = models.CharField(max_length=15, default='Created',choices=TYPE_CHOICES)
     date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True)
-    created_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='SampleTest_created_by', blank=True,null=True)
-    updated_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='SampleTest_updated_by', blank=True,null=True)
+    created = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='SampleTest_created_by', blank=True,null=True)
+    updated = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='SampleTest_updated_by', blank=True,null=True)
     def __str__(self):
         return self.sample.name
     
@@ -100,21 +102,11 @@ class ResultFields(models.Model):
     reason = models.CharField(max_length=50, blank=False, null=True, default = '')
     note = models.CharField(max_length=150, blank=False, null=True, default = '')
     date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True)
-    created_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='ResultFields_created_by', blank=True,null=True)
-    updated_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='ResultFields_updated_by', blank=True,null=True)
+    created = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='ResultFields_created_by', blank=True,null=True)
+    updated = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='ResultFields_updated_by', blank=True,null=True)
     # def __str__(self):
     #     return self.
 
-
-class SampleTestStatus(models.Model):
-    TYPE_CHOICES = (('Created','Created'),('Progress','Progress'),('Finished','Finished'))
-    test_status = models.CharField(max_length=15, default='Created',choices=TYPE_CHOICES)
-    sampletest = models.OneToOneField(SampleTest, on_delete=models.PROTECT,related_name='sampleteststatussampletest')
-    date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True)
-    created_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='SampleTestStatus_created_by', blank=True,null=True)
-    updated_by = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='SampleTestStatus_updated_by', blank=True,null=True)
-    # def __str__(self):
-    #     return self.user.username
 
 class Product(models.Model):
     name = models.CharField(max_length=150, blank=False, null=True, default = '')
