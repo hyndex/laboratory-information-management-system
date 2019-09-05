@@ -124,9 +124,9 @@ def PermissionView(request):
     import json
     if request.user.is_authenticated:
         perm=fundamental().user_role_permission(username=str(request.user))
+        return JsonResponse(perm,safe=False)
     else:
-        perm='{"user not permitted"}'
-    return JsonResponse(perm,safe=False)
+        return Response({"msg":"Not LoggedIn"},status=400)
 
 from  users.install import *
 def InstallView(request):

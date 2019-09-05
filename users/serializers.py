@@ -95,6 +95,7 @@ class RolePermissionSerializer(serializers.ModelSerializer):
         model = RolePermission
         fields=('id','module','role','create','read','update','delete','type','date_updated','created','updated')
         read_only_fields=('date_updated','created','updated')
+        depth=1
 
 
 class RoleSerializer(serializers.ModelSerializer):
@@ -103,6 +104,7 @@ class RoleSerializer(serializers.ModelSerializer):
         model = Role
         fields=('id','role','date_updated','created','updated','rolepermission_role')
         read_only_fields=('date_updated','created','updated')
+        depth=1
 
 class ModuleSerializer(serializers.ModelSerializer):
     class Meta:
@@ -111,11 +113,14 @@ class ModuleSerializer(serializers.ModelSerializer):
         read_only_fields=('date_updated','created','updated')
 
 class ProfileRoleSerializer(serializers.ModelSerializer):
-    # role=RoleSerializer(required=True)
-    # profile=ProfileSerializer(required=True)
+    # role=RoleSerializer(required=True,read_only=True)
+    # profile=ProfileSerializer(required=True,read_only=True)
+    # user_id=serializers.IntegerField(write_only=True)
+    # role_id=serializers.IntegerField(write_only=True)
     class Meta:
         model = ProfileRole
         fields=('id','user','role','depertment','date_updated','created','updated')
         read_only_fields=('date_updated','created','updated')
+        depth=1
              
 

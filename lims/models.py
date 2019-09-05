@@ -104,8 +104,7 @@ class ResultFields(models.Model):
     date_updated = models.DateTimeField(default=dt.datetime.now(), blank=True)
     created = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='ResultFields_created_by', blank=True,null=True)
     updated = models.ForeignKey(User, on_delete=models.PROTECT,  related_name='ResultFields_updated_by', blank=True,null=True)
-    # def __str__(self):
-    #     return self.
+
 
 
 class Product(models.Model):
